@@ -8,6 +8,16 @@ While on 0.x they may still change.
 
 ## [Unreleased]
 
+### Fixed
+
+- Windows: the suite and the build now run there. Git's CRLF checkout defeated
+  the line-anchored structural patterns, so `.gitattributes` pins the working
+  tree to LF and the parser normalises line endings itself; the stdout-purity
+  test spawns `node` against tsx's CLI instead of `npx`, which cmd.exe cannot
+  launch without a shell; and `chmod +x` in the build script became
+  `scripts/make-executable.mjs`.
+- `npm run test:live` no longer depends on POSIX `VAR=value` prefix syntax.
+
 ## [0.1.0] — 2026-10-08
 
 First release.

@@ -1,7 +1,7 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync } from 'node:fs';
 import type { PdfParser, PdfResult } from '../../src/pdf/pipeline.js';
 import { parseText } from '../../src/pdf/structure.js';
-import { textPath } from './pdf-fixtures.js';
+import { readSnapshot, textPath } from './pdf-fixtures.js';
 
 /**
  * A PdfParser backed by the committed text snapshots.
@@ -42,7 +42,7 @@ export class SnapshotPdfParser implements PdfParser {
     }
 
     this.parsed.push(fekId);
-    const text = readFileSync(path, 'utf8');
+    const text = readSnapshot(fekId);
     const result: PdfResult = {
       parsed: parseText(text, { pageCount: pageCountFor(fekId), issueGroup }),
       cached: false,

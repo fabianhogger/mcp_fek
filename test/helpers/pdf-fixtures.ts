@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 export const PDF_FIXTURE_DIR = join(import.meta.dirname, '..', 'fixtures', 'pdf');
@@ -20,6 +20,19 @@ export function pdfPath(id: string): string {
 
 export function textPath(id: string): string {
   return join(TEXT_FIXTURE_DIR, `${id}.txt`);
+}
+
+/**
+ * Read an extracted-text snapshot as the extractor produced it.
+ *
+ * .gitattributes pins these files to LF, so this is belt and braces — but a
+ * clone made before that landed, or an editor that "helpfully" rewrites line
+ * endings, would otherwise turn into a baffling parser failure rather than an
+ * obvious encoding one. pdf.js emits only `\n`, so normalising here cannot
+ * mask a real difference.
+ */
+export function readSnapshot(id: string): string {
+  return readFileSync(textPath(id), 'utf8').replace(/\r\n?/g, '\n');
 }
 
 /**

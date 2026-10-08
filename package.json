@@ -28,11 +28,11 @@
   },
   "sideEffects": false,
   "scripts": {
-    "build": "tsc -p tsconfig.build.json && chmod +x dist/index.js",
+    "build": "tsc -p tsconfig.build.json && node scripts/make-executable.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run --project unit",
     "test:watch": "vitest --project unit",
-    "test:live": "FEK_LIVE=1 vitest run --project live",
+    "test:live": "node scripts/run-live.mjs",
     "record": "tsx scripts/record-fixtures.ts",
     "fetch:pdfs": "tsx scripts/fetch-pdf-fixtures.ts",
     "extract:text": "tsx scripts/extract-pdf-text.ts",

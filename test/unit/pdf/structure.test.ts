@@ -1,11 +1,10 @@
-import { readFileSync } from 'node:fs';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { dehyphenate, squash } from '../../../src/pdf/clean.js';
 import { preservesLength, toGreekLookalikes } from '../../../src/pdf/confusables.js';
 import { lawName, renderToc, sectionText, type ParsedFek } from '../../../src/pdf/doc.js';
 import { isGarbled } from '../../../src/pdf/garbled.js';
 import { parseText } from '../../../src/pdf/structure.js';
-import { PDF_FIXTURES, textPath } from '../../helpers/pdf-fixtures.js';
+import { PDF_FIXTURES, readSnapshot } from '../../helpers/pdf-fixtures.js';
 
 /**
  * The structural parser, against four real gazette issues.
@@ -21,7 +20,7 @@ import { PDF_FIXTURES, textPath } from '../../helpers/pdf-fixtures.js';
  */
 
 function parse(key: keyof typeof PDF_FIXTURES, issueGroup: number): ParsedFek {
-  const text = readFileSync(textPath(PDF_FIXTURES[key]), 'utf8');
+  const text = readSnapshot(PDF_FIXTURES[key]);
   return parseText(text, { pageCount: 0, issueGroup });
 }
 

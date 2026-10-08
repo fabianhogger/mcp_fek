@@ -307,8 +307,15 @@ export interface ParseTextOptions {
  * Kept separate from reading a PDF so the structural logic can be tested
  * without shipping 15 MB of binaries — the same split the Python version made,
  * and the reason its test suite ports across directly.
+ *
+ * Line endings are normalised first because every anchor below is
+ * line-anchored, and a trailing `\r` defeats any of them ending in `$`
+ * without the multiline flag (`PART` is one). pdf.js never emits `\r`, so
+ * this costs nothing in production and makes text read from a file — a
+ * snapshot checked out on Windows, say — parse identically.
  */
-export function parseText(text: string, opts: ParseTextOptions): ParsedFek {
+export function parseText(input: string, opts: ParseTextOptions): ParsedFek {
+  const text = input.includes('\r') ? input.replace(/\r\n?/g, '\n') : input;
   const heading = parseLawHeading(text.slice(0, HEADING_SEARCH_WINDOW));
   let lawTitle = heading.title;
   let toc: TocEntry[];

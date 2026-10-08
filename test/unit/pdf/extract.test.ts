@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { extractText, linesFromTextContent } from '../../../src/pdf/extract.js';
-import { hasPdf, PDF_FIXTURES, pdfPath, textPath } from '../../helpers/pdf-fixtures.js';
+import { hasPdf, PDF_FIXTURES, pdfPath, readSnapshot } from '../../helpers/pdf-fixtures.js';
 
 /**
  * The extraction layer, against the real PDFs.
@@ -24,7 +24,7 @@ describe.skipIf(!have)('extractText', () => {
     // structural anchor depends on, and a version bump changing it would
     // otherwise show up as a baffling parser failure rather than a diff here.
     const result = await extractText(read(PDF_FIXTURES.law));
-    expect(result.text).toBe(readFileSync(textPath(PDF_FIXTURES.law), 'utf8'));
+    expect(result.text).toBe(readSnapshot(PDF_FIXTURES.law));
   }, 120_000);
 
   it('reports the real page count and readable Greek', async () => {

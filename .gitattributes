@@ -1,0 +1,11 @@
+# Line endings must not be rewritten on checkout.
+#
+# Every structural anchor in src/pdf/structure.ts is line-anchored, and a
+# `\r` left at the end of a line defeats any pattern ending in `$` without the
+# multiline flag — src/pdf/structure.ts's `PART` is exactly that, so a CRLF
+# checkout silently loses every ΜΕΡΟΣ/ΚΕΦΑΛΑΙΟ heading. test/unit/pdf's
+# snapshot reproduction also compares extracted text to these files byte for
+# byte. Both reasons make LF part of the fixtures, not a preference.
+* text=auto eol=lf
+
+*.pdf binary
