@@ -7,7 +7,7 @@ import { EtError } from './et/errors.js';
 import { resolveOrigins } from './et/origins.js';
 import { NOT_CONSOLIDATED_LAW } from './fek/disclaimer.js';
 import { createLogger, type Logger } from './logger.js';
-import { PdfPipeline } from './pdf/pipeline.js';
+import { PdfPipeline, type PdfParser } from './pdf/pipeline.js';
 import { TOOLS } from './tools/index.js';
 import type { ToolContext, ToolDef } from './tools/types.js';
 import { VERSION } from './version.js';
@@ -17,8 +17,8 @@ export interface CreateServerOptions {
   logger?: Logger;
   /** Overridable so tests can drive the whole server from fixtures. */
   client?: EtClient;
-  /** Injected separately in tests, which serve PDFs from local fixtures. */
-  pdf?: PdfPipeline;
+  /** Injected separately in tests, which parse from committed text snapshots. */
+  pdf?: PdfParser;
   cache?: Cache;
   now?: () => number;
 }

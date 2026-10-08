@@ -431,8 +431,8 @@ describe('get_fek', () => {
     });
     expect(res.structured['text_source']).toBe('not_requested');
     expect(res.structured['text']).toBeNull();
-    // No PDF should have been downloaded for a metadata-only call.
-    expect(srv.calls.filter((u) => u.endsWith('.pdf'))).toHaveLength(0);
+    // Nothing should have been parsed for a metadata-only call.
+    expect(srv.pdf.parsed).toEqual([]);
   });
 
   it('degrades to metadata when extraction is switched off', async () => {
@@ -443,12 +443,34 @@ describe('get_fek', () => {
     expect(res.text).toMatch(/FEK_PDF_TEXT=0/);
   });
 
-  it('downloads a PDF once even when asked twice', async () => {
+  it('parses an issue once even when asked for two articles', async () => {
+    // Re-parsing a 450,000-character issue to answer a second question about
+    // it would be the single most expensive mistake available here.
     srv = await makeTestServer();
     await callTool(srv, 'get_fek', { fek_id: '20260100121', articles: [1] });
-    const downloads = srv.calls.filter((u) => u.endsWith('.pdf')).length;
     await callTool(srv, 'get_fek', { fek_id: '20260100121', articles: [2] });
-    expect(srv.calls.filter((u) => u.endsWith('.pdf')).length).toBe(downloads);
+    expect(srv.pdf.parsed).toEqual(['20260100121']);
+  });
+
+  it('keeps the metadata and the link when the PDF cannot be fetched', async () => {
+    // What a reader actually gets when the blob origin is unreachable or the
+    // issue has no PDF: still an answer, still a link, no exception.
+    srv = await makeTestServer({
+      pdf: {
+        enabled: true,
+        parse: async () => {
+          throw new Error('blob unreachable');
+        },
+      },
+    });
+    const res = await callTool(srv, 'get_fek', { fek_id: '20260100121' });
+    expect(res.isError).toBe(false);
+    expect(res.structured['status']).toBe('ok');
+    expect(res.structured['text_source']).toBe('none');
+    expect(res.structured['pages']).toBe(112);
+    expect(res.structured['pdf_url']).toContain('20260100121.pdf');
+    expect(res.text).toContain('blob unreachable');
+    expect(res.text).toContain('The link above still works');
   });
 
   it('refuses a law reference, because an act number names no issue', async () => {

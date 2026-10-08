@@ -21,8 +21,6 @@ async function main(): Promise<void> {
   await mkdir(TEXT_FIXTURE_DIR, { recursive: true });
 
   for (const id of Object.values(PDF_FIXTURES)) {
-    // A scanned issue has no text to snapshot; its whole point is the absence.
-    if (id === PDF_FIXTURES.scan) continue;
     if (!hasPdf(id)) {
       process.stderr.write(`${id}: PDF missing, run npm run fetch:pdfs\n`);
       continue;

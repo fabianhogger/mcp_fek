@@ -31,6 +31,22 @@ export interface PdfResult {
 }
 
 /**
+ * What the tools actually need from the PDF side.
+ *
+ * Narrow on purpose. Downloading nine megabytes and running pdf.js is the one
+ * part of this server that cannot be driven from a recorded fixture, so the
+ * tools depend on this interface and the offline suite supplies an
+ * implementation backed by the committed text snapshots. That keeps the
+ * presentation logic — contents rendering, article selection, budgets, the
+ * scanned-issue wording — under test everywhere, and confines the parts that
+ * genuinely need the binaries to tests that skip without them.
+ */
+export interface PdfParser {
+  readonly enabled: boolean;
+  parse(fekId: string, url: string, issueGroup: number): Promise<PdfResult>;
+}
+
+/**
  * How many parsed issues to keep in memory.
  *
  * Small on purpose: one parsed law is ~450,000 characters plus its sections,
@@ -40,7 +56,7 @@ export interface PdfResult {
  */
 const MEMORY_ENTRIES = 4;
 
-export class PdfPipeline {
+export class PdfPipeline implements PdfParser {
   private readonly store: TextStore;
   private readonly inFlight = new Map<string, Promise<PdfResult>>();
   /**

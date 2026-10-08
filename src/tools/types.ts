@@ -3,12 +3,12 @@ import type { Cache } from '../cache.js';
 import type { Config } from '../config.js';
 import type { EtActions } from '../et/actions.js';
 import type { Logger } from '../logger.js';
-import type { PdfPipeline } from '../pdf/pipeline.js';
+import type { PdfParser } from '../pdf/pipeline.js';
 
 export interface ToolContext {
   actions: EtActions;
-  /** Downloads and parses issue PDFs. Loaded lazily; may be disabled. */
-  pdf: PdfPipeline;
+  /** Parses issue PDFs. Loaded lazily; may be disabled. */
+  pdf: PdfParser;
   cache: Cache;
   logger: Logger;
   config: Config;

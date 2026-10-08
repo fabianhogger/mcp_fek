@@ -259,11 +259,16 @@ Fixtures come from the real service, never from hand-written JSON: the point is
 to pin down what an undocumented API actually does, and a hand-built fixture
 only pins down what we assumed.
 
-The parser's structural tests run off committed text snapshots rather than the
-PDFs, so they never skip. `test/unit/pdf/extract.test.ts` asserts that
-re-extracting reproduces those snapshots byte for byte — which is what catches
-a pdf.js upgrade quietly changing line reconstruction. `pdfjs-dist` is pinned
-exactly for the same reason.
+The reference PDFs are gitignored — large, and derivable from a deterministic
+URL — so the committed text snapshots in `test/fixtures/text/` are what let the
+suite run on a fresh checkout. The structural parser and every `get_fek` test
+run off those snapshots and never skip; only the download, the byte caps and
+pdf.js itself need the binaries, and those eight tests skip without them,
+saying so. The daily `live-smoke` job fetches the PDFs and runs the full suite,
+which is where `test/unit/pdf/extract.test.ts` checks that re-extracting
+reproduces the snapshots byte for byte — the thing that catches a pdf.js
+upgrade quietly changing line reconstruction. `pdfjs-dist` is pinned exactly
+for the same reason.
 
 ## Provenance
 

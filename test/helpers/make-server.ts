@@ -1,4 +1,3 @@
-import { readFileSync } from 'node:fs';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { Cache } from '../../src/cache.js';
@@ -7,10 +6,10 @@ import { EtClient } from '../../src/et/client.js';
 import type { HttpFetch } from '../../src/et/http.js';
 import { resolveOrigins } from '../../src/et/origins.js';
 import { silentLogger } from '../../src/logger.js';
-import { PdfPipeline } from '../../src/pdf/pipeline.js';
+import type { PdfParser } from '../../src/pdf/pipeline.js';
 import { createServer } from '../../src/server.js';
 import { mockHttpFetch, type MockOptions } from './fixtures.js';
-import { hasPdf, pdfPath } from './pdf-fixtures.js';
+import { SnapshotPdfParser } from './snapshot-pdf.js';
 
 /**
  * Fixed instant: 2026-10-07 18:30 Europe/Athens, i.e. the evening of a weekday
@@ -24,6 +23,8 @@ export const MORNING_NOW = Date.parse('2026-10-07T08:00:00Z');
 export interface TestServer {
   client: Client;
   calls: string[];
+  /** The snapshot parser, for asserting how often a PDF was parsed. */
+  pdf: SnapshotPdfParser;
   close: () => Promise<void>;
 }
 
@@ -41,6 +42,8 @@ export async function makeTestServer(
     overrides?: MockOptions['overrides'];
     /** Turn off PDF extraction, as FEK_PDF_TEXT=0 does in production. */
     pdfText?: boolean;
+    /** Supply a different parser, e.g. one that always fails. */
+    pdf?: PdfParser;
   } = {},
 ): Promise<TestServer> {
   const calls: string[] = [];
@@ -67,15 +70,12 @@ export async function makeTestServer(
     now,
   });
 
+  const snapshotPdf = new SnapshotPdfParser({ enabled: opts.pdfText ?? true });
+
   const { server } = createServer({
     config,
     client: etClient,
-    pdf: new PdfPipeline({
-      client: etClient,
-      config,
-      logger: silentLogger,
-      fetchImpl: localPdfFetch(calls),
-    }),
+    pdf: opts.pdf ?? snapshotPdf,
     cache: new Cache({ disableDisk: true }),
     logger: silentLogger,
     now,
@@ -88,6 +88,7 @@ export async function makeTestServer(
   return {
     client,
     calls,
+    pdf: snapshotPdf,
     close: async () => {
       await client.close();
       await server.close();
@@ -110,35 +111,5 @@ export async function callTool(
     text,
     structured: (res.structuredContent ?? {}) as Record<string, unknown>,
     isError: res.isError === true,
-  };
-}
-
-/**
- * Serve PDFs from the local fixture directory.
- *
- * The PDFs are gitignored, so a caller that has not run `npm run fetch:pdfs`
- * gets a 404 — which is the same path a genuinely missing issue takes, so the
- * degraded behaviour is still exercised rather than the test exploding.
- */
-function localPdfFetch(calls: string[]): HttpFetch {
-  return async (req) => {
-    calls.push(req.url);
-    const id = /\/(\d{11})\.pdf$/.exec(req.url)?.[1];
-    if (!id || !hasPdf(id)) {
-      return {
-        status: 404,
-        contentType: 'application/xml',
-        body: '',
-        headers: new Headers(),
-      };
-    }
-    const bytes = new Uint8Array(readFileSync(pdfPath(id)));
-    return {
-      status: 200,
-      contentType: 'application/pdf',
-      body: '',
-      bytes,
-      headers: new Headers(),
-    };
   };
 }

@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { TOOLS } from '../../src/tools/index.js';
@@ -54,6 +54,34 @@ describe('package hygiene', () => {
     for (const t of TOOLS) {
       expect(Object.keys(t.inputSchema).length, t.name).toBeGreaterThan(0);
     }
+  });
+});
+
+describe('offline test coverage', () => {
+  it('commits the extracted-text snapshots the parser tests depend on', () => {
+    // These are what let the structural and tool suites run on a fresh
+    // checkout. The reference PDFs are gitignored because they are large and
+    // derivable; if these snapshots went too, the parser and get_fek would
+    // quietly stop being tested in CI while still passing locally — which is
+    // exactly what happened once already.
+    const ids = ['20260100121', '20260100126', '20260100127', '20260205013', '19850100100'];
+    for (const id of ids) {
+      const path = join(root, 'test', 'fixtures', 'text', `${id}.txt`);
+      expect(existsSync(path), `${id}.txt is missing — run npm run extract:text`).toBe(true);
+    }
+  });
+
+  it('keeps the scanned issue\u2019s snapshot empty, because that is the fact', () => {
+    // A pre-digital issue extracts to nothing at all. A non-empty snapshot
+    // here would mean the scan detection no longer has anything to detect.
+    const path = join(root, 'test', 'fixtures', 'text', '19850100100.txt');
+    expect(readFileSync(path, 'utf8').trim()).toBe('');
+  });
+
+  it('gives the large snapshots real content', () => {
+    const law = readFileSync(join(root, 'test', 'fixtures', 'text', '20260100121.txt'), 'utf8');
+    expect(law.length).toBeGreaterThan(400_000);
+    expect(law).toContain('ΠΙΝΑΚΑΣ ΠΕΡΙΕΧΟΜΕΝΩΝ');
   });
 });
 

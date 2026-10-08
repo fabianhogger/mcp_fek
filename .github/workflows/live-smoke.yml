@@ -22,3 +22,8 @@ jobs:
         run: npx tsx src/index.ts --self-test
         continue-on-error: true
       - run: npm run test:live
+      # The reference PDFs are gitignored, so eight tests skip in the gated
+      # build. Fetch them here and run the whole suite, which is the only
+      # place pdf.js itself and the snapshot reproduction get exercised.
+      - run: npm run fetch:pdfs
+      - run: npm test
