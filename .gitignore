@@ -1,0 +1,10 @@
+node_modules/
+dist/
+coverage/
+*.log
+.DS_Store
+.cache/
+*.tgz
+.tmp-*/
+# Reference PDFs are large and derivable: npm run fetch:pdfs
+test/fixtures/pdf/*.pdf

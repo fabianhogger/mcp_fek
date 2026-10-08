@@ -1,0 +1,24 @@
+name: live-smoke
+
+# The upstream is undocumented and could change shape at any time, so this
+# runs daily to notice. It never gates anything: an outage is not a regression.
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.19'
+          cache: npm
+      - run: npm ci
+      - name: Report which origins answer
+        run: npx tsx src/index.ts --self-test
+        continue-on-error: true
+      - run: npm run test:live

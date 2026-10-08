@@ -1,0 +1,78 @@
+{
+  "/searchbydate|8a66458125ae": {
+    "file": "searchbydate-weekday.json",
+    "why": "A busy Wednesday: dozens of Τεύχος Β issues, the normal case."
+  },
+  "/searchbydate|eed9ec216916": {
+    "file": "searchbydate-weekend.json",
+    "why": "A Sunday. The gazette does not publish, so this must stay an empty success."
+  },
+  "/simplesearch|b062cc193940": {
+    "file": "simplesearch-by-number.json",
+    "why": "Resolving Α 121/2026. No text, so no snippets and Score is 0."
+  },
+  "/simplesearch|1f1961fff812": {
+    "file": "simplesearch-text.json",
+    "why": "Full-text search: base64 extracts, matched terms, and the trailing stemmedQuery row."
+  },
+  "/simplesearch|9df91d948f6a": {
+    "file": "simplesearch-empty.json",
+    "why": "A query that matches nothing, to pin the no-results shape."
+  },
+  "/documententitybyid/806565": {
+    "file": "documententitybyid.json",
+    "why": "Topics and subjects spread over several rows that must be folded into one entity."
+  },
+  "/issuegroupidsbyyear/2026": {
+    "file": "issuegroupidsbyyear-2026.json",
+    "why": "Which series actually published in a year."
+  },
+  "/searchlegislation|d2adbd203437": {
+    "file": "searchlegislation-5324-2026.json",
+    "why": "Law 5324 narrowed to 2026: the unambiguous case, and it carries a title."
+  },
+  "/searchlegislation|fb25c27127db": {
+    "file": "searchlegislation-5324-anyyear.json",
+    "why": "The era collision: with no year this returns Α 63/1932, not the 2026 law."
+  },
+  "/searchasep|40093346af3d": {
+    "file": "searchasep-1-2026.json",
+    "why": "Scalar payload, unlike every sibling endpoint. Carries a title."
+  },
+  "/documententitybyid/803159": {
+    "file": "documententitybyid-law.json",
+    "why": "The Α 121/2026 law entity, used by get_fek and fek_subjects."
+  },
+  "/simplesearch|b205b1dfe4ed": {
+    "file": "simplesearch-b6047.json",
+    "why": "Resolving Β 6047/2026 from a citation."
+  },
+  "/simplesearch|3f7a22d8fa67": {
+    "file": "simplesearch-1985-a100.json",
+    "why": "A pre-digital issue: it exists, but its PDF is an image-only scan."
+  },
+  "/companies|e44491b5bc6a": {
+    "file": "companies-trapeza.json",
+    "why": "Company name lookup. Takes partialName, not the companies_Name its rows use."
+  },
+  "/companies|981ec2c1cc56": {
+    "file": "companies-ambiguous.json",
+    "why": "Many companies share this word; the tool must return candidates, not guess."
+  },
+  "/searchcompany|61f979631e4d": {
+    "file": "searchcompany-3135.json",
+    "why": "Company filings keyed on the internal id. A name in `company` silently returns nothing."
+  },
+  "/searchkad|79b6845d7bf8": {
+    "file": "searchkad-8290-2003.json",
+    "why": "ΚΑΔ lookup. Row shape differs from every other search: DocumentEntityID, explicit Year."
+  },
+  "/documententitybyid/707398": {
+    "file": "documententitybyid-1985.json",
+    "why": "The 1985 Α 100 entity: a pre-digital scan, so get_fek must degrade to a link."
+  },
+  "/categories": {
+    "file": "categories.json",
+    "why": "Subject categories: ids plus their Greek labels."
+  }
+}

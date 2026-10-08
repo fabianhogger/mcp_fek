@@ -1,0 +1,68 @@
+{
+  "name": "mcp-fek",
+  "version": "0.1.0",
+  "description": "MCP server for the Greek Government Gazette (\u03a6\u0395\u039a, \u0395\u03b8\u03bd\u03b9\u03ba\u03cc \u03a4\u03c5\u03c0\u03bf\u03b3\u03c1\u03b1\u03c6\u03b5\u03af\u03bf) \u2014 search issues, resolve citations, fetch PDFs and extract article text",
+  "type": "module",
+  "license": "MIT",
+  "author": "fabianhogger",
+  "bin": {
+    "fek-mcp": "dist/index.js"
+  },
+  "main": "dist/server.js",
+  "types": "dist/server.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/server.d.ts",
+      "import": "./dist/server.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json && chmod +x dist/index.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --project unit",
+    "test:watch": "vitest --project unit",
+    "test:live": "FEK_LIVE=1 vitest run --project live",
+    "record": "tsx scripts/record-fixtures.ts",
+    "fetch:pdfs": "tsx scripts/fetch-pdf-fixtures.ts",
+    "extract:text": "tsx scripts/extract-pdf-text.ts",
+    "prepack": "npm run build",
+    "prepublishOnly": "npm run typecheck && npm run test && npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "pdfjs-dist": "4.10.38",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "tsx": "^4.23.0",
+    "typescript": "^5.9.0",
+    "vitest": "^5.0.3"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "fek",
+    "greece",
+    "greek-law",
+    "government-gazette",
+    "legislation",
+    "et.gr",
+    "ethniko-typografeio"
+  ]
+}

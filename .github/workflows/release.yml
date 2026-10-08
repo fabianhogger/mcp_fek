@@ -1,0 +1,36 @@
+name: release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.19'
+          cache: npm
+          registry-url: https://registry.npmjs.org
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - run: npm pack
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: mcp-fek-*.tgz
+          generate_release_notes: true
+      # Publishing is opt-in per repository, so a fork cannot publish by
+      # accident just by pushing a tag.
+      - name: Publish to npm
+        if: vars.NPM_PUBLISH_ENABLED == 'true'
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
