@@ -8,10 +8,13 @@ import { VERSION } from '../../src/version.js';
 
 const root = join(import.meta.dirname, '..', '..');
 const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')) as {
+  name: string;
   version: string;
   files: string[];
   bin: Record<string, string>;
   scripts: Record<string, string>;
+  repository?: { url?: string };
+  publishConfig?: { access?: string };
   dependencies: Record<string, string>;
 };
 
@@ -84,6 +87,23 @@ describe('offline test coverage', () => {
     const law = readFileSync(join(root, 'test', 'fixtures', 'text', '20260100121.txt'), 'utf8');
     expect(law.length).toBeGreaterThan(400_000);
     expect(law).toContain('ΠΙΝΑΚΑΣ ΠΕΡΙΕΧΟΜΕΝΩΝ');
+  });
+});
+
+describe('publish metadata', () => {
+  it('carries the repository field provenance requires', () => {
+    // `npm publish --provenance` refuses outright without a repository URL it
+    // can match against the building workflow, and publishConfig turns
+    // provenance on. A missing field fails at the very last step of a release.
+    expect(pkg.repository?.url).toMatch(/github\.com\/[^/]+\/[^/]+\.git$/);
+    expect(pkg.publishConfig?.access).toBe('public');
+  });
+
+  it('documents the install command the published name actually gives', () => {
+    // The package name is what `npx` resolves, so a rename silently makes the
+    // README's install snippet wrong for everyone who follows it.
+    const readme = readFileSync(join(root, 'README.md'), 'utf8');
+    expect(readme).toContain(`npx -y ${pkg.name}`);
   });
 });
 

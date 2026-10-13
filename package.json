@@ -5,6 +5,14 @@
   "type": "module",
   "license": "MIT",
   "author": "fabianhogger",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fabianhogger/mcp_fek.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fabianhogger/mcp_fek/issues"
+  },
+  "homepage": "https://github.com/fabianhogger/mcp_fek#readme",
   "bin": {
     "fek-mcp": "dist/index.js"
   },
@@ -19,6 +27,7 @@
   },
   "files": [
     "dist",
+    "src",
     "README.md",
     "LICENSE",
     "CHANGELOG.md"

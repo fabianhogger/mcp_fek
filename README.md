@@ -41,6 +41,38 @@ the one you mean; do not assume the most recent.
 
 ## Install
 
+Needs Node 20.19 or later. **No API key** — the gazette search backend is
+public.
+
+### From a clone
+
+This is the only way that works today: the package is not on npm yet, so
+`npx mcp-fek` answers 404.
+
+```bash
+git clone https://github.com/fabianhogger/mcp_fek.git
+cd mcp_fek
+npm ci
+npm run build
+node dist/index.js --self-test   # lists the tools and probes both origins
+```
+
+Then point a client at the built entrypoint by absolute path:
+
+```json
+{
+  "mcpServers": {
+    "fek": { "command": "node", "args": ["/absolute/path/to/mcp_fek/dist/index.js"] }
+  }
+}
+```
+
+```bash
+claude mcp add fek -- node /absolute/path/to/mcp_fek/dist/index.js
+```
+
+### From npm, once published
+
 ```json
 {
   "mcpServers": {
@@ -49,20 +81,10 @@ the one you mean; do not assume the most recent.
 }
 ```
 
-Or with Claude Code:
-
 ```bash
 claude mcp add fek -- npx -y mcp-fek
-```
-
-Check it works, including both upstream origins:
-
-```bash
 npx -y mcp-fek --self-test
 ```
-
-Needs Node 20.19 or later. **No API key** — the gazette search backend is
-public.
 
 ## Tools
 

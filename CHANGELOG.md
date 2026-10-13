@@ -8,17 +8,7 @@ While on 0.x they may still change.
 
 ## [Unreleased]
 
-### Fixed
-
-- Windows: the suite and the build now run there. Git's CRLF checkout defeated
-  the line-anchored structural patterns, so `.gitattributes` pins the working
-  tree to LF and the parser normalises line endings itself; the stdout-purity
-  test spawns `node` against tsx's CLI instead of `npx`, which cmd.exe cannot
-  launch without a shell; and `chmod +x` in the build script became
-  `scripts/make-executable.mjs`.
-- `npm run test:live` no longer depends on POSIX `VAR=value` prefix syntax.
-
-## [0.1.0] — 2026-10-08
+## [0.1.0] — 2026-10-09
 
 First release.
 
@@ -39,3 +29,6 @@ First release.
   can return an act and enforced by a policy test.
 - Both upstream origins overridable by environment variable, with a
   `--self-test` that reports which one is broken.
+- Linux and Windows support, on Node 20.19, 22 and 24. Line endings are pinned
+  to LF because the structural patterns are line-anchored, and the npm scripts
+  avoid shell constructs cmd.exe does not have.
